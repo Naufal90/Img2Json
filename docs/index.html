@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gambar JSON Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .gallery img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>Gambar dari JSON</h1>
+    <div class="gallery" id="gallery"></div>
+
+    <script>
+        async function loadImages() {
+            try {
+                let response = await fetch('../json/images.json');
+                let data = await response.json();
+                
+                let gallery = document.getElementById('gallery');
+                data.forEach(item => {
+                    let img = document.createElement('img');
+                    img.src = `data:image/png;base64,${item.base64}`;
+                    img.alt = item.filename;
+                    gallery.appendChild(img);
+                });
+            } catch (error) {
+                console.error("Error loading JSON:", error);
+            }
+        }
+
+        loadImages();
+    </script>
+</body>
+</html>
