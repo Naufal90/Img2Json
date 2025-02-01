@@ -19,10 +19,12 @@ jobs:
         python-version: '3.x'
 
     - name: Install Dependencies
-      run: pip install -r requirements.txt
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt  # Install dependencies from requirements.txt
 
     - name: Run Image to JSON Converter
-      run: python scripts/convert.py
+      run: python scripts/convert.py  # Pastikan skrip konversi sudah ada
 
     - name: Move JSON to Docs
       run: |
