@@ -2,33 +2,38 @@ name: Convert Images to JSON
 
 on:
   push:
-      branches:
-            - main  # Bisa disesuaikan dengan branch yang kamu pakai
-              pull_request:
+    branches:
+      - main
+  pull_request:
 
-              jobs:
-                convert:
-                    runs-on: ubuntu-latest
+jobs:
+  convert:
+    runs-on: ubuntu-latest
 
-                        steps:
-                            - name: Checkout Repository
-                                  uses: actions/checkout@v3
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
 
-                                      - name: Set Up Python
-                                            uses: actions/setup-python@v4
-                                                  with:
-                                                          python-version: '3.x'
+    - name: Set Up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
 
-                                                              - name: Install Dependencies
-                                                                    run: pip install -r requirements.txt
+    - name: Install Dependencies
+      run: pip install -r requirements.txt
 
-                                                                        - name: Run Conversion Script
-                                                                              run: python scripts/convert.py
+    - name: Run Conversion Script
+      run: python scripts/convert.py
 
-                                                                                  - name: Commit and Push JSON
-                                                                                        run: |
-                                                                                                git config --global user.name "github-actions"
-                                                                                                        git config --global user.email "github-actions@github.com"
-                                                                                                                git add json/images.json
-                                                                                                                        git commit -m "Update generated JSON"
-                                                                                                                                git push
+    - name: Move JSON to GitHub Pages Directory
+      run: |
+        mkdir -p docs/json
+        mv json/images.json docs/json/
+
+    - name: Commit and Push JSON
+      run: |
+        git config --global user.name "github-actions"
+        git config --global user.email "github-actions@github.com"
+        git add docs/json/images.json
+        git commit -m "Update JSON for GitHub Pages" || echo "No changes to commit"
+        git push
