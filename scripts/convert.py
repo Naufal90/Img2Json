@@ -1,36 +1,40 @@
 import os
 import json
-from PIL import Image
-import base64
+import cv2
+import numpy as np
 
-# Direktori input dan output
-DATA_DIR = "../data"
-JSON_DIR = "../json"
+DATA_DIR = "data"
+JSON_DIR = "json"
 
-# Pastikan folder output ada
 os.makedirs(JSON_DIR, exist_ok=True)
 
-# Fungsi untuk mengonversi gambar ke JSON
-def convert_image_to_json(image_path):
-    with open(image_path, "rb") as img_file:
-            base64_str = base64.b64encode(img_file.read()).decode("utf-8")
-                
-                    return {
-                            "filename": os.path.basename(image_path),
-                                    "base64": base64_str
-                                        }
+def convert_image_to_blocks(image_path):
+    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    height, width = img.shape
+    blocks = []
 
-                                        # Proses semua gambar di folder data
-                                        image_files = [f for f in os.listdir(DATA_DIR) if f.lower().endswith((".png", ".jpg", ".jpeg"))]
+    for y in range(height):
+        row = []
+        for x in range(width):
+            pixel = img[y, x]
+            if pixel < 128:
+                row.append("stone")  # Ubah sesuai blok Minecraft
+            else:
+                row.append("air")
+        blocks.append(row)
 
-                                        output = []
-                                        for image_file in image_files:
-                                            image_path = os.path.join(DATA_DIR, image_file)
-                                                output.append(convert_image_to_json(image_path))
+    return {
+        "filename": os.path.basename(image_path),
+        "width": width,
+        "height": height,
+        "blocks": blocks
+    }
 
-                                                # Simpan hasil ke JSON
-                                                output_path = os.path.join(JSON_DIR, "images.json")
-                                                with open(output_path, "w") as json_file:
-                                                    json.dump(output, json_file, indent=4)
+image_files = [f for f in os.listdir(DATA_DIR) if f.lower().endswith((".png", ".jpg", ".jpeg"))]
+output = [convert_image_to_blocks(os.path.join(DATA_DIR, img)) for img in image_files]
 
-                                                    print(f"Konversi selesai! File JSON tersimpan di {output_path}")
+output_path = os.path.join(JSON_DIR, "building.json")
+with open(output_path, "w") as json_file:
+    json.dump(output, json_file, indent=4)
+
+print(f"Konversi selesai! File JSON tersimpan di {output_path}")
