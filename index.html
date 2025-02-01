@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to JSON for Minecraft</title>
+    <script>
+        async function loadJson() {
+            let response = await fetch("json/building.json");
+            let jsonData = await response.json();
+            document.getElementById("json-output").textContent = JSON.stringify(jsonData, null, 2);
+        }
+    </script>
+</head>
+<body onload="loadJson()">
+    <h1>Convert Image to JSON for Minecraft</h1>
+    <pre id="json-output">Loading...</pre>
+</body>
+</html>
