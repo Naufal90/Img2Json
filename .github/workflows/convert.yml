@@ -1,0 +1,34 @@
+name: Convert Images to JSON
+
+on:
+  push:
+      branches:
+            - main  # Bisa disesuaikan dengan branch yang kamu pakai
+              pull_request:
+
+              jobs:
+                convert:
+                    runs-on: ubuntu-latest
+
+                        steps:
+                            - name: Checkout Repository
+                                  uses: actions/checkout@v3
+
+                                      - name: Set Up Python
+                                            uses: actions/setup-python@v4
+                                                  with:
+                                                          python-version: '3.x'
+
+                                                              - name: Install Dependencies
+                                                                    run: pip install -r requirements.txt
+
+                                                                        - name: Run Conversion Script
+                                                                              run: python scripts/convert.py
+
+                                                                                  - name: Commit and Push JSON
+                                                                                        run: |
+                                                                                                git config --global user.name "github-actions"
+                                                                                                        git config --global user.email "github-actions@github.com"
+                                                                                                                git add json/images.json
+                                                                                                                        git commit -m "Update generated JSON"
+                                                                                                                                git push
